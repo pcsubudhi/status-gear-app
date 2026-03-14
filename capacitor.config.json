@@ -1,0 +1,13 @@
+{
+  "appId": "com.steplit.statusgear",
+  "appName": "Status Gear",
+  "webDir": "www",
+  "android": {
+    "allowMixedContent": true
+  },
+  "plugins": {
+    "PushNotifications": {
+      "presentationOptions": ["badge", "sound", "alert"]
+    }
+  }
+}

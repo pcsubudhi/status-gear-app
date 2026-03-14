@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Status Gear</string>
+    <string name="title_activity_main">Status Gear</string>
+    <string name="package_name">com.steplit.statusgear</string>
+    <string name="custom_url_scheme">com.steplit.statusgear</string>
+</resources>
