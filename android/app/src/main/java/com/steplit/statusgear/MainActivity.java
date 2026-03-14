@@ -58,7 +58,7 @@ public class MainActivity extends BridgeActivity {
     }
 
     @Override
-    protected void onResume() {
+    public void onResume() {
         super.onResume();
         // Re-register FCM token EVERY time app comes to foreground
         // This ensures token is always fresh even after reinstall
