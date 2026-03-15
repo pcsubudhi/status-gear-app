@@ -48,7 +48,7 @@ public class NotificationAlertActivity extends Activity {
         root.setOrientation(LinearLayout.VERTICAL);
         root.setGravity(Gravity.CENTER_HORIZONTAL);
         root.setBackgroundColor(0xFF0F172A); // Dark navy
-        root.setPadding(dp(24), dp(50), dp(24), dp(30));
+        root.setPadding(dp(24), dp(50), dp(24), dp(60));
 
         // "STATUS GEAR" label
         TextView appLabel = new TextView(this);
