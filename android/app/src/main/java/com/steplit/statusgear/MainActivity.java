@@ -60,8 +60,6 @@ public class MainActivity extends BridgeActivity {
     @Override
     public void onResume() {
         super.onResume();
-        // Re-register FCM token EVERY time app comes to foreground
-        // This ensures token is always fresh even after reinstall
         registerFCMToken();
     }
 
@@ -82,7 +80,7 @@ public class MainActivity extends BridgeActivity {
     }
 
     private void checkFullScreenPermission() {
-        if (Build.VERSION.SDK_INT >= 34) { // Android 14+
+        if (Build.VERSION.SDK_INT >= 34) {
             NotificationManager nm = getSystemService(NotificationManager.class);
             if (!nm.canUseFullScreenIntent()) {
                 Log.d(TAG, "Full screen intent not allowed — requesting");

@@ -26,16 +26,10 @@ public class SGFirebaseMessagingService extends FirebaseMessagingService {
         super.onMessageReceived(remoteMessage);
         Log.d(TAG, "Push received from: " + remoteMessage.getFrom());
 
-        String title = "Status Gear";
-        String body = "You have pending tasks";
+        String title = "";
+        String body = "";
 
-        if (remoteMessage.getNotification() != null) {
-            title = remoteMessage.getNotification().getTitle() != null ?
-                    remoteMessage.getNotification().getTitle() : title;
-            body = remoteMessage.getNotification().getBody() != null ?
-                    remoteMessage.getNotification().getBody() : body;
-        }
-
+        // Check data payload first (our push sends data-only messages)
         if (remoteMessage.getData().containsKey("title")) {
             title = remoteMessage.getData().get("title");
         }
@@ -43,20 +37,42 @@ public class SGFirebaseMessagingService extends FirebaseMessagingService {
             body = remoteMessage.getData().get("body");
         }
 
+        // Fallback to notification payload
+        if (title.isEmpty() && remoteMessage.getNotification() != null) {
+            title = remoteMessage.getNotification().getTitle() != null ?
+                    remoteMessage.getNotification().getTitle() : "";
+            body = remoteMessage.getNotification().getBody() != null ?
+                    remoteMessage.getNotification().getBody() : "";
+        }
+
+        // ═══ GUARD: Skip if nothing to show ═══
+        if (title.isEmpty() && body.isEmpty()) {
+            Log.d(TAG, "Empty notification — skipping");
+            return;
+        }
+        if (body.trim().isEmpty() || body.equals("You have pending tasks")) {
+            Log.d(TAG, "No specific events — skipping full-screen alert");
+            return;
+        }
+
         // Wake up the screen
         wakeScreen();
 
-        // Show full-screen notification
+        // Launch full-screen alert activity
         showFullScreenNotification(title, body);
     }
 
     private void wakeScreen() {
-        PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
-        PowerManager.WakeLock wakeLock = pm.newWakeLock(
-            PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE,
-            "statusgear:notification"
-        );
-        wakeLock.acquire(10 * 1000L); // 10 seconds
+        try {
+            PowerManager pm = (PowerManager) getSystemService(POWER_SERVICE);
+            PowerManager.WakeLock wakeLock = pm.newWakeLock(
+                PowerManager.FULL_WAKE_LOCK | PowerManager.ACQUIRE_CAUSES_WAKEUP | PowerManager.ON_AFTER_RELEASE,
+                "statusgear:notification"
+            );
+            wakeLock.acquire(10 * 1000L);
+        } catch (Exception e) {
+            Log.w(TAG, "Could not wake screen", e);
+        }
     }
 
     private void showFullScreenNotification(String title, String body) {
@@ -65,7 +81,7 @@ public class SGFirebaseMessagingService extends FirebaseMessagingService {
         fullScreenIntent.putExtra("title", title);
         fullScreenIntent.putExtra("body", body);
         fullScreenIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        
+
         PendingIntent fullScreenPendingIntent = PendingIntent.getActivity(
             this, (int) System.currentTimeMillis(), fullScreenIntent,
             PendingIntent.FLAG_UPDATE_CURRENT | PendingIntent.FLAG_IMMUTABLE

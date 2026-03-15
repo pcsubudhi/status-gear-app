@@ -2,6 +2,10 @@
   "appId": "com.steplit.statusgear",
   "appName": "Status Gear",
   "webDir": "www",
+  "server": {
+    "url": "https://sgapp.steplit.com/steplit-mobile-app.html",
+    "cleartext": false
+  },
   "android": {
     "allowMixedContent": true
   },
